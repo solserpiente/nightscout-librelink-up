@@ -1,0 +1,31 @@
+name: Fetch Glucose
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Sync Script
+        run: npm start
+        env:
+          LINKUP_USERNAME: ${{ secrets.LINKUP_USERNAME }}
+          LINKUP_PASSWORD: ${{ secrets.LINKUP_PASSWORD }}
+          NIGHTSCOUT_URL: ${{ secrets.NIGHTSCOUT_URL }}
+          NIGHTSCOUT_API_SECRET: ${{ secrets.NIGHTSCOUT_API_SECRET }}
+          LINKUP_REGION: EU
